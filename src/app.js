@@ -74,7 +74,7 @@ ajax({
           });
           menu.on('longSelect', function(e) {
             ajax({
-              url: 'https://cmcs.cmtec.se/cmcs/json',
+              url: api_url,
               type: 'json',
               method: 'post',
               data:{
