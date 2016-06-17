@@ -1,16 +1,15 @@
 {
     "appKeys": {},
     "capabilities": [
-        ""
+        "configurable"
     ],
-    "companyName": "cm@cmtec.se",
-    "longName": "cmcs",
+    "companyName": "Christoffer Martinsson",
+    "longName": "CMtec ControlStation Remote",
     "projectType": "pebblejs",
     "resources": {
         "media": [
             {
                 "file": "images/menu_icon.png",
-                "menuIcon": true,
                 "name": "IMAGE_MENU_ICON",
                 "type": "bitmap"
             },
@@ -30,6 +29,12 @@
                 "type": "font"
             },
             {
+                "file": "images/cmcs_28px.png",
+                "menuIcon": true,
+                "name": "IMAGES_CMCS_28PX_PNG",
+                "type": "bitmap"
+            },
+            {
                 "file": "images/cmcs_logo.png",
                 "name": "IMAGES_CMCS_LOGO_PNG",
                 "type": "bitmap"
@@ -37,7 +42,12 @@
         ]
     },
     "sdkVersion": "3",
-    "shortName": "cmcs",
+    "shortName": "CMCS Remote",
+    "targetPlatforms": [
+        "aplite",
+        "basalt",
+        "chalk"
+    ],
     "uuid": "24b54a73-4d0e-4e81-bfcc-44b11bf84d8c",
     "versionCode": 1,
     "versionLabel": "1.0",

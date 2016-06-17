@@ -1,34 +1,105 @@
-/**
- * Welcome to Pebble.js!
- *
- * This is where you write your app.
- */
-
 var UI = require('ui');
 var ajax = require('ajax');
+var Settings = require('settings');
+var api_key = Settings.option('api_key');
+var api_url = Settings.option('api_url');
 
-var menu_items = [{title: 'Tv On', subtitle: 'Living room', id: '37cc-439e-98de-3fe555f6ecce'},{title: 'TV Off', subtitle: 'Living room', id: 'd161-4e87-aa07-de340813b7ce'}];
-
-var menu = new UI.Menu({
-sections: [{
-  items: menu_items
-}]
-});
-menu.on('select', function(e) {
-    var URL = 'https://cmcs.cmtec.se/cmcs/trigger?id=' + e.item.id; 
-    ajax(
-  {
-    url: URL,
-    type: 'json'
+Settings.config(
+  'https://www.cmtec.se/cmcs-pebble-app-settings/cmcs-pebble-app-settings.html',
+  function open(e) {
+    console.log('open: ' + JSON.stringify(e.options));
   },
-  function(data) {
-    // Success!
-    console.log('Successfully fetched weather data!');
-  },
-  function(error) {
-    // Failure!
-    console.log('Failed fetching weather data: ' + error);
+  function close(e) {
+    console.log('close: ' + JSON.stringify(e.options));
   }
 );
-});
-  menu.show();
+
+ajax({
+  url: api_url + '?driver=pebble',
+  type: 'json',
+  },
+  function(data) {
+    var menu = new UI.Menu({
+      backgroundColor: 'black',
+      textColor: 'white',
+      highlightBackgroundColor: 'white',
+      highlightTextColor: 'black',
+      status: {
+        color: 'white',
+        backgroundColor: 'black',
+        separator: 'none',
+      },
+      sections: [{
+        items: data
+      }]
+    });
+
+    menu.on('select', function(e) {
+      ajax({
+        url: api_url + '?driver=pebble&zone=' + e.item.title,
+        type: 'json',
+        },
+        function(data) {
+          var menu = new UI.Menu({
+            backgroundColor: 'black',
+            textColor: 'white',
+            highlightBackgroundColor: 'white',
+            highlightTextColor: 'black',
+            status: {
+              color: 'white',
+              backgroundColor: 'black',
+              separator: 'none',
+            },
+            sections: [{
+              items: data
+            }]
+          });
+          menu.on('select', function(e) {
+            ajax({
+              url: api_url, 
+              type: 'json',
+              method: 'post',
+              data:{
+                driver: 'pebble',
+                id: e.item.id_on,
+                api_key: api_key
+                }
+              },
+              function(data) {
+              },
+              function(error) {
+                console.log('Failed fetching data: ' + error);
+              }
+            );
+          });
+          menu.on('longSelect', function(e) {
+            ajax({
+              url: 'https://cmcs.cmtec.se/cmcs/json',
+              type: 'json',
+              method: 'post',
+              data:{
+                driver: 'pebble',
+                id: e.item.id_off,
+                api_key: api_key
+                }
+              },
+              function(data) {
+              },
+              function(error) {
+                console.log('Failed fetching data: ' + error);
+              }
+            );
+          });
+          menu.show();
+        },
+        function(error) {
+          console.log('Failed fetching data: ' + error);
+        }
+      );
+    });
+    menu.show();
+  },
+  function(error) {
+    console.log('Failed fetching data: ' + error);
+  }
+);
